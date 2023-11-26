@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     }
 
     struct image res = rotate(img, angle);
-    image_destroy(&img); // Удалить только один вызов image_destroy
+    image_destroy(&img);
 
     FILE* res_file;
     if (!file_open(argv[2], &res_file, "wb")) {

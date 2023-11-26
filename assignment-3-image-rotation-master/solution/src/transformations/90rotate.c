@@ -35,12 +35,12 @@ static struct image rotate_270_degrees( const struct image source, struct pixel 
 
 struct image rotate(const struct image source, const int angle) {
     if (source.data == NULL) {
-        return some_image(source.height, source.width, NULL);
+        return some_image(0, 0, NULL);
     }
 
     struct pixel *pixels = malloc(sizeof(struct pixel) * source.width * source.height);
     if (pixels == NULL) {
-        return some_image(source.height, source.width, NULL);
+        return some_image(0, 0, NULL);
     }
 
     struct image result;
@@ -62,9 +62,10 @@ struct image rotate(const struct image source, const int angle) {
             return copy(source);
         default:
             free(pixels);
-            return some_image(source.height, source.width, NULL);
+            return some_image(0, 0, NULL);
     }
 
+    struct image final_result = copy(result);
     free(pixels);
-    return result;
+    return final_result;
 }
