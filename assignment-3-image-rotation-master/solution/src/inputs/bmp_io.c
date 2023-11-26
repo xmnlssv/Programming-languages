@@ -22,13 +22,12 @@ struct __attribute__((packed)) bmp_header
 };
 
 inline static size_t size_of_padding(const size_t width) {
-
     if (width % 4 == 0) {
         return 0;
     }
     return 4 - ((width * sizeof(struct pixel)) % 4);
-
 }
+
 
 inline static bool head_read(FILE* file, struct bmp_header* header) {
     return fread(header, sizeof(struct bmp_header), 1, file);
@@ -64,17 +63,14 @@ inline static struct bmp_header create_header(const struct image *image) {
 
 
 bool from_bmp(FILE* in, struct image* image) {
-
+    size_t padding = size_of_padding(image->width);
     struct bmp_header header = {0};
     if (!head_read(in, &header)) {
         image_destroy(image);
         return false;
     }
 
-    //size_t size = size_of_padding(image->width);
     *image = image_create(header.biWidth, header.biHeight);
-
-    const size_t padding = size_of_padding(image->width);
 
     for (size_t i = 0; i < image->height; ++i) {
         for (size_t j = 0; j < image->width; ++j) {
@@ -83,7 +79,8 @@ bool from_bmp(FILE* in, struct image* image) {
                 return false;
             }
         }
-        if (fseek(in, padding, SEEK_CUR)) {
+        if (fseek(in, (long)padding, SEEK_CUR)) {
+            perror("Error seeking in BMP file");
             image_destroy(image);
             return false;
         }
@@ -93,7 +90,6 @@ bool from_bmp(FILE* in, struct image* image) {
 }
 
 bool to_bmp(FILE* out, const struct image* image) {
-
     struct bmp_header header = create_header(image);
 
     if (!fwrite(&header, sizeof(struct bmp_header), 1, out)) {
@@ -101,13 +97,11 @@ bool to_bmp(FILE* out, const struct image* image) {
     }
 
     if (fseek(out, header.bOffBits, SEEK_SET)) {
+        perror("Error seeking in BMP file");
         return false;
     }
 
-    //const int8_t zero = 0;
-
     const uint8_t paddings[3] = {0};
-
     const size_t padding = size_of_padding(image->width);
 
     if (image->data == NULL) {
@@ -115,14 +109,11 @@ bool to_bmp(FILE* out, const struct image* image) {
     }
 
     for (size_t i = 0; i < image->height; ++i) {
-
-        if (    !fwrite(image->data + i * image->width, image->width * sizeof(struct pixel), 1, out) ||
-                !fwrite(paddings, padding, 1, out) ) {
+        if (!fwrite(image->data + i * image->width, image->width * sizeof(struct pixel), 1, out) ||
+            !fwrite(paddings, padding, 1, out)) {
             return false;
         }
-
     }
 
     return true;
-
 }

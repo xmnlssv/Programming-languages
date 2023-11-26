@@ -29,4 +29,4 @@ static inline size_t get_index(const size_t x, const size_t y, const size_t widt
     return y * width + x;
 }
 
-#endif //ASSIGNMENT_IMAGE_ROTATION_IMAGE_H
+#endif

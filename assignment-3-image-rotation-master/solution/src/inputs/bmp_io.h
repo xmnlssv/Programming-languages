@@ -10,4 +10,4 @@ bool from_bmp(FILE* in, struct image* image);
 
 bool to_bmp(FILE* out, const struct image* image);
 
-#endif //LAB3_BMP_IO_H
+#endif

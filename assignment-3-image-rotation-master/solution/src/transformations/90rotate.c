@@ -1,18 +1,13 @@
 #include "90rotate.h"
-#include "../image/image.h"
-#include <stdlib.h>
 #include <malloc.h>
 
-static struct image rotate_90_degrees( const struct image source, struct pixel *pixels ) {
-
+static struct image rotate_90_degrees_counter_clockwise(const struct image source, struct pixel *pixels) {
     for (size_t y = 0; y < source.height; ++y) {
         for (size_t x = 0; x < source.width; ++x) {
-            pixels[ get_index(source.height - 1 - y, x, source.height) ] = source.data [get_index(x, y, source.width)];
+            pixels[get_index(x, source.height - 1 - y, source.height)] = source.data[get_index(y, x, source.width)];
         }
     }
-
     return some_image(source.height, source.width, pixels);
-
 }
 
 static struct image rotate_180_degrees( const struct image source, struct pixel *pixels ) {
@@ -38,19 +33,38 @@ static struct image rotate_270_degrees( const struct image source, struct pixel 
 
 }
 
-
-struct image rotate(const struct image source, const uint16_t degrees ) {
-
+struct image rotate(const struct image source, const int angle) {
     if (source.data == NULL) {
         return some_image(source.height, source.width, NULL);
     }
 
     struct pixel *pixels = malloc(sizeof(struct pixel) * source.width * source.height);
-
-    switch (degrees) {
-        case 90:  return rotate_90_degrees(source, pixels);
-        case 180: return rotate_180_degrees(source, pixels);
-        case 270: return rotate_270_degrees(source, pixels);
-        default: return rotate_90_degrees(source, pixels);
+    if (pixels == NULL) {
+        return some_image(source.height, source.width, NULL);
     }
+
+    struct image result;
+    switch (angle) {
+        case 90:
+        case -270:
+            result = rotate_90_degrees_counter_clockwise(source, pixels);
+            break;
+        case -90:
+        case 270:
+            result = rotate_270_degrees(source, pixels);
+            break;
+        case 180:
+        case -180:
+            result = rotate_180_degrees(source, pixels);
+            break;
+        case 0:
+            free(pixels);
+            return copy(source);
+        default:
+            free(pixels);
+            return some_image(source.height, source.width, NULL);
+    }
+
+    free(pixels);
+    return result;
 }

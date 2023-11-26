@@ -1,5 +1,5 @@
-#ifndef LAB3_FILE_OPEN_CLOSE_H
-#define LAB3_FILE_OPEN_CLOSE_H
+#ifndef LAB3_90ROTATE_H
+#define LAB3_90ROTATE_H
 
 #include "../image/image.h"
 
@@ -17,5 +17,6 @@ static inline int16_t try_to_close_file(FILE* file) {
     }
     return 0;
 }
+struct image rotate(struct image source, uint16_t degrees);
 
 #endif //LAB3_FILE_OPEN_CLOSE_H
