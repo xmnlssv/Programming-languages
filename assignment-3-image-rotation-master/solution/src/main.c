@@ -3,8 +3,6 @@
 #include "inputs/file_open_close.h"
 #include "transformations/90rotate.h"
 
-#include <stdbool.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -22,14 +20,14 @@ int main(int argc, char *argv[]) {
     int angle = atoi(argv[3]);
     if (angle != 0 && angle != 90 && angle != -90 && angle != 180 && angle != -180 && angle != 270 && angle != -270) {
         fprintf(stderr, "Invalid angle. Allowed values are 0, 90, -90, 180, -180, 270, -270.\n");
-        file_close(file); // Закрытие файла в случае ошибки
+        file_close(file);
         return -1;
     }
 
     struct image img = {0};
     if (!from_bmp(file, &img)) {
         perror("Error: BMP reader failed");
-        file_close(file); // Закрытие файла в случае ошибки
+        file_close(file);
         return -3;
     }
 

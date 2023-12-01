@@ -4,7 +4,7 @@
 static struct image rotate_90_degrees_counter_clockwise(const struct image source, struct pixel *pixels) {
     for (size_t y = 0; y < source.height; ++y) {
         for (size_t x = 0; x < source.width; ++x) {
-            pixels[get_index(x, source.height - 1 - y, source.height)] = source.data[get_index(y, x, source.width)];
+            pixels[get_index(source.width - 1 - x, y, source.height)] = source.data[get_index(y, x, source.width)];
         }
     }
     return some_image(source.height, source.width, pixels);
@@ -22,7 +22,7 @@ static struct image rotate_180_degrees(const struct image source, struct pixel *
 static struct image rotate_270_degrees(const struct image source, struct pixel *pixels) {
     for (size_t y = 0; y < source.height; ++y) {
         for (size_t x = 0; x < source.width; ++x) {
-            pixels[get_index(source.width - 1 - x, y, source.height)] = source.data[get_index(y, x, source.width)];
+            pixels[get_index(x, source.height - 1 - y, source.width)] = source.data[get_index(y, x, source.width)];
         }
     }
     return some_image(source.height, source.width, pixels);
@@ -60,6 +60,9 @@ struct image rotate(const struct image source, const int angle) {
             return some_image(0, 0, NULL);
     }
 
-    free(pixels);
+    if (result.data != pixels) {
+        free(pixels);
+    }
     return result;
 }
+
